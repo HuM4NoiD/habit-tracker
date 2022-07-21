@@ -79,6 +79,9 @@ private fun RoutineDetailContent(
     selectionRecipient.onResult {
         viewModel.onUiEvent(RoutineDetailUiEvent.TasksSelected(it))
     }
+
+    val tasksState = viewModel.selectedTasksLiveData.observeAsState()
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -130,7 +133,7 @@ private fun RoutineDetailContent(
                             onClick = {
                                 navigator.navigate(
                                     TaskSelectionSheetDestination(
-                                        routine.tasks.map { task -> task.id }.toLongArray()
+                                        tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
                                     )
                                 )
                             },
@@ -144,14 +147,15 @@ private fun RoutineDetailContent(
                             )
                         }
                     }
-                    if (routine.tasks.isEmpty()) {
+                    if (tasksState.value.isNullOrEmpty()) {
                         Box(
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             Text(
                                 text = "There are no tasks for this routine",
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.body1
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier.align(Alignment.Center)
                             )
                         }
                     } else {
@@ -161,7 +165,7 @@ private fun RoutineDetailContent(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             contentPadding = PaddingValues(32.dp)
                         ) {
-                            items(items = routine.tasks) { task ->
+                            items(items = tasksState.value!!) { task ->
                                 TaskListItem(task = task)
                             }
                         }

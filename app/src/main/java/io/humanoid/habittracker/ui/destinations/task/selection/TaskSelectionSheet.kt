@@ -115,7 +115,7 @@ fun TaskSelectionSheet(
             shape = CircleShape,
             modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
         ) {
-            Text(text = "Add Tasks")
+            Text(text = if (selectedTasksMap.isEmpty()) "Clear Tasks" else "Add Tasks")
         }
     }
 }

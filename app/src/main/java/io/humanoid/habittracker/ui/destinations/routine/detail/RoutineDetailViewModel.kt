@@ -15,6 +15,7 @@ class RoutineDetailViewModel(
     private val taskUseCases = appModule.domainModule.taskUseCases
 
     val routineLiveData = MutableLiveData<Routine>(routineUseCases.getRoutine(routineId))
+    val selectedTasksLiveData = taskUseCases.subscribeForRoutine(routineId)
     private val routineSubscription = routineUseCases.observeRoutine(routineId, routineLiveData)
 
     override fun onUiEvent(event: RoutineDetailUiEvent) {

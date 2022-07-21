@@ -25,6 +25,8 @@ class TaskUseCases(
 
     fun subscribeToAll() = repository.subscribeToAll()
 
+    fun subscribeForRoutine(routineId: Long) = repository.subscribeForRoutine(routineId)
+
     private fun buildObserver(taskId: Long, taskLiveData: MutableLiveData<Task>) = DataObserver<Class<Task>> { _ ->
         val newTask = repository.get(taskId)
         taskLiveData.postValue(newTask)
