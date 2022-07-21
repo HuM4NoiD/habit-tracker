@@ -12,3 +12,5 @@ val OnErrorForDark = Color.White
 
 val ErrorForLight = Color(0xffed2647)
 val OnErrorForLight = Color.White
+
+val DarkBackground = Color(0xFF080808)

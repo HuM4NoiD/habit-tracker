@@ -19,12 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.humanoid.habittracker.R
+import kotlin.math.min
 
 @Composable
 fun NumberInputRow(
     intervalState: MutableState<Int>,
     unitLabel: String,
-    accessibilityLabel: String
+    accessibilityLabel: String,
+    minMax: Pair<Int, Int>? = null
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
@@ -33,8 +35,14 @@ fun NumberInputRow(
     ) {
         IconButton(
             onClick = {
-                if (intervalState.value > 0) {
-                    intervalState.value -= 1
+                if (minMax != null) {
+                    if (intervalState.value > min(minMax.first, 0)) {
+                        intervalState.value -= 1
+                    }
+                } else {
+                    if (intervalState.value > 0) {
+                        intervalState.value -= 1
+                    }
                 }
             },
             modifier = Modifier.size(72.dp)
@@ -60,7 +68,11 @@ fun NumberInputRow(
         }
         IconButton(
             onClick = {
-                if (intervalState.value < 30) {
+                if (minMax != null) {
+                    if (intervalState.value < minMax.second) {
+                        intervalState.value += 1
+                    }
+                } else {
                     intervalState.value += 1
                 }
             },

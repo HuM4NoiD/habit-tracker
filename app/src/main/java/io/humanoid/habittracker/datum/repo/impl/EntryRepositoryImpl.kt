@@ -2,6 +2,7 @@ package io.humanoid.habittracker.datum.repo.impl
 
 import androidx.lifecycle.LiveData
 import io.humanoid.habittracker.datum.model.Entry
+import io.humanoid.habittracker.datum.model.Entry_
 import io.humanoid.habittracker.datum.repo.EntryRepository
 import io.objectbox.Box
 import io.objectbox.android.ObjectBoxLiveData
@@ -19,6 +20,14 @@ class EntryRepositoryImpl(
 
     override fun remove(id: Long): Boolean {
         return box.remove(id)
+    }
+
+    override fun subscribeForTask(taskId: Long): LiveData<List<Entry>> {
+        return ObjectBoxLiveData<Entry>(
+            box.query()
+                .equal(Entry_.taskId, taskId)
+                .build()
+        )
     }
 
     override fun subscribeToAll(): LiveData<List<Entry>> {

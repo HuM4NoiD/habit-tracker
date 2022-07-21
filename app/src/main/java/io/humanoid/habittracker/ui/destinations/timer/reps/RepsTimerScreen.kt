@@ -95,6 +95,7 @@ fun RepsTimerScreen(
                             when (timerState.value) {
                                 RepsClock.TimerState.PAUSED -> viewModel.onUiEvent(RepsTimerUiEvent.ResumeTimer)
                                 RepsClock.TimerState.RUNNING -> viewModel.onUiEvent(RepsTimerUiEvent.PauseTimer)
+                                else -> {}
                             }
                         },
                         modifier = Modifier.size(64.dp)
@@ -108,6 +109,7 @@ fun RepsTimerScreen(
                                 painter = painterResource(id = R.drawable.ic_str_pause),
                                 contentDescription = "Resume Timer"
                             )
+                            else -> {}
                         }
                     }
                 }

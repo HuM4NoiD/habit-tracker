@@ -1,5 +1,6 @@
 package io.humanoid.habittracker.ui.component
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -16,8 +18,8 @@ import io.humanoid.habittracker.ui.destinations.bottomNavDestinations
 import io.humanoid.habittracker.ui.destinations.bottomNavItems
 
 @OptIn(
-    ExperimentalMaterialApi::class, androidx.compose.animation.ExperimentalAnimationApi::class,
-    com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi::class
+    ExperimentalMaterialApi::class, ExperimentalAnimationApi::class,
+    ExperimentalMaterialNavigationApi::class
 )
 @Composable
 fun HabitTrackerRoot(

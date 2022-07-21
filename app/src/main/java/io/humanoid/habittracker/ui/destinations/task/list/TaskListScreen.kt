@@ -57,7 +57,7 @@ fun TaskListScreen(
                 onClick = {
                     Log.d(TAG, "TaskListScreen: Adding task")
                     navigator.navigate(
-                        TaskInputSheetDestination
+                        TaskInputSheetDestination()
                     )
                 },
                 shape = CircleShape

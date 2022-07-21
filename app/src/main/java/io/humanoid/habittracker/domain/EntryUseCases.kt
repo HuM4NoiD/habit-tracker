@@ -8,5 +8,7 @@ class EntryUseCases(
 ) {
     fun insertEntry(entry: Entry) = repository.insert(entry)
 
+    fun subscribeForTask(taskId: Long) = repository.subscribeForTask(taskId)
+
     fun subscribeToAll() = repository.subscribeToAll()
 }

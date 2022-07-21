@@ -29,7 +29,7 @@ class EntryInputViewModel(
     }
 
     class Factory(val taskId: Long): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return EntryInputViewModel(taskId) as T
         }
     }

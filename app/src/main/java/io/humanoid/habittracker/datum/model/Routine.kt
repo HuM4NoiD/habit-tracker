@@ -1,6 +1,7 @@
 package io.humanoid.habittracker.datum.model
 
 import android.os.Parcelable
+import io.objectbox.annotation.Backlink
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.annotation.Index
@@ -16,6 +17,7 @@ data class Routine(
     val name: String,
     val interval: Int,
 ): Parcelable {
+    @Backlink(to = "routines")
     lateinit var tasks: ToMany<Task>
 
     override fun toString(): String {

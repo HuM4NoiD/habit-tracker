@@ -87,6 +87,7 @@ fun DurationTimerScreen(
                             when (clockState.value) {
                                 DurationClock.ClockState.PAUSED -> viewModel.onUiEvent(DurationTimerUiEvent.RESUME)
                                 DurationClock.ClockState.RUNNING -> viewModel.onUiEvent(DurationTimerUiEvent.PAUSE)
+                                else -> {}
                             }
                         },
                         modifier = Modifier.size(64.dp)
@@ -100,6 +101,7 @@ fun DurationTimerScreen(
                                 painter = painterResource(id = R.drawable.ic_str_pause),
                                 contentDescription = "Resume Timer"
                             )
+                            else -> {}
                         }
                     }
                 }

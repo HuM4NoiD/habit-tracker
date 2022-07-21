@@ -17,6 +17,7 @@ class TimerViewModel(
 
     override fun onUiEvent(event: TimerUiEvent) {
         when (event) {
+            else -> {}
         }
     }
 
@@ -24,7 +25,7 @@ class TimerViewModel(
         val id: Long,
         val isTask: Boolean
     ): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return TimerViewModel(id, isTask) as T
         }
     }

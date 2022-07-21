@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
@@ -12,7 +13,9 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Rain,
     secondary = Dawn,
     error = ErrorForDark,
-    onError = OnErrorForDark
+    onError = OnErrorForDark,
+    background = DarkBackground,
+    surface = DarkBackground
 )
 
 private val LightColorPalette = lightColors(
@@ -37,10 +40,12 @@ fun HabitTrackerTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Comp
     val systemUiController = rememberSystemUiController()
 
     val colors = if (darkTheme) {
-        systemUiController.setSystemBarsColor(DarkColorPalette.surface)
+        systemUiController.setStatusBarColor(DarkColorPalette.surface)
+        systemUiController.setNavigationBarColor(Color.Transparent)
         DarkColorPalette
     } else {
-        systemUiController.setSystemBarsColor(LightColorPalette.surface)
+        systemUiController.setStatusBarColor(LightColorPalette.surface)
+        systemUiController.setNavigationBarColor(Color.Transparent)
         LightColorPalette
     }
 

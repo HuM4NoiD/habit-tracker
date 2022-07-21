@@ -52,7 +52,7 @@ fun RoutineListScreen(
             )
             Button(
                 onClick = {
-                    navigator.navigate(RoutineInputSheetDestination)
+                    navigator.navigate(RoutineInputSheetDestination())
                 },
                 shape = CircleShape
             ) {
@@ -70,7 +70,7 @@ fun RoutineListScreen(
                             routine = routine,
                             modifier = modifier,
                             onClick = {
-                                navigator.navigate(RoutineDetailScreenDestination(routine))
+                                navigator.navigate(RoutineDetailScreenDestination(routine.id))
                             },
                             onIconClick = {
                                 viewModel.onUiEvent(RoutineListUiEvent.Delete(routine.id))

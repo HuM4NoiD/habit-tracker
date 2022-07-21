@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.humanoid.habittracker.datum.model.Task
 import io.humanoid.habittracker.datum.model.TaskType
@@ -37,15 +37,16 @@ private const val TAG = "TaskInputDialog"
 @Destination(style = DestinationStyle.BottomSheet::class)
 fun TaskInputSheet(
     navigator: DestinationsNavigator,
+    taskToEdit: Task? = null
 ) {
     val nameState = remember {
-        mutableStateOf("")
+        mutableStateOf(taskToEdit?.name ?: "")
     }
     val descState = remember {
-        mutableStateOf("")
+        mutableStateOf(taskToEdit?.desc ?: "")
     }
     val taskTypeState = remember {
-        mutableStateOf(TaskType.REPS)
+        mutableStateOf(taskToEdit?.type ?: TaskType.REPS)
     }
     val viewModel: TaskListViewModel = viewModel()
 
@@ -79,47 +80,54 @@ fun TaskInputSheet(
             },
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            SelectionChip(
-                label = "Duration",
-                selected = taskTypeState.value == TaskType.DURATION,
-                onClick = {
-                    taskTypeState.value = TaskType.DURATION
-                }
-            )
-            SelectionChip(
-                label = "Reps",
-                selected = taskTypeState.value == TaskType.REPS,
-                onClick = {
-                    taskTypeState.value = TaskType.REPS
-                },
-            )
+        if (taskToEdit == null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                SelectionChip(
+                    label = "Duration",
+                    selected = taskTypeState.value == TaskType.DURATION,
+                    onClick = {
+                        taskTypeState.value = TaskType.DURATION
+                    }
+                )
+                SelectionChip(
+                    label = "Reps",
+                    selected = taskTypeState.value == TaskType.REPS,
+                    onClick = {
+                        taskTypeState.value = TaskType.REPS
+                    },
+                )
+            }
         }
 
         Button(
             modifier = Modifier
                 .padding(16.dp),
             onClick = {
+                val finalTask = taskToEdit?.copy(
+                    name = nameState.value,
+                    desc = descState.value,
+                    type = taskTypeState.value
+                ) ?: Task(
+                    name = nameState.value,
+                    desc = descState.value,
+                    type = taskTypeState.value
+                )
                 viewModel.onUiEvent(
                     TaskListUiEvent.Insert(
-                        Task(
-                            name = nameState.value,
-                            desc = descState.value,
-                            type = taskTypeState.value
-                        )
+                        finalTask
                     )
                 )
                 navigator.popBackStack()
             },
             shape = CircleShape
         ) {
-            Text(text = "Add Task")
+            Text(text = if (taskToEdit == null) "Add Task" else "Edit Task")
         }
     }
 }
@@ -127,35 +135,8 @@ fun TaskInputSheet(
 @Preview
 @Composable
 fun TaskInputSheetPreview() {
-    val nameState = remember {
-        mutableStateOf("")
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp)
-            )
-            .background(MaterialTheme.colors.surface),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedTextField(
-            value = nameState.value,
-            onValueChange = {nameState.value = it},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            label = {
-                Text(text = "Name")
-            },
-        )
-        Button(
-            modifier = Modifier
-                .padding(16.dp),
-            onClick = {},
-            shape = CircleShape
-        ) {
-            Text(text = "Add Task")
-        }
-    }
+    TaskInputSheet(
+        navigator = EmptyDestinationsNavigator,
+        taskToEdit = null
+    )
 }

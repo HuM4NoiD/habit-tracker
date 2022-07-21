@@ -30,16 +30,17 @@ import io.humanoid.habittracker.ui.destinations.routine.list.RoutineListViewMode
 @Composable
 @Destination(style = DestinationStyle.BottomSheet::class)
 fun RoutineInputSheet(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    routineToEdit: Routine? = null
 ) {
 
     val viewModel: RoutineListViewModel = viewModel()
 
     val nameState = remember {
-        mutableStateOf("")
+        mutableStateOf(routineToEdit?.name ?: "")
     }
     val intervalState = remember {
-        mutableStateOf(10)
+        mutableStateOf(routineToEdit?.interval ?: 10)
     }
     Column(
         modifier = Modifier
@@ -64,25 +65,30 @@ fun RoutineInputSheet(
         NumberInputRow(
             intervalState = intervalState,
             unitLabel = "seconds",
-            accessibilityLabel = "Interval"
+            accessibilityLabel = "Interval",
+            minMax = Pair(0, 30)
         )
         Button(
             modifier = Modifier
                 .padding(16.dp),
             onClick = {
+                val finalRoutine = routineToEdit?.copy(
+                    name = nameState.value,
+                    interval = intervalState.value
+                ) ?: Routine(
+                    name = nameState.value,
+                    interval = intervalState.value
+                )
                 viewModel.onUiEvent(
                     RoutineListUiEvent.Insert(
-                        Routine(
-                            name = nameState.value,
-                            interval = intervalState.value
-                        )
+                        finalRoutine
                     )
                 )
                 navigator.popBackStack()
             },
             shape = CircleShape
         ) {
-            Text(text = "Add Routine")
+            Text(text = if (routineToEdit == null) "Add Routine" else "Edit Routine")
         }
     }
 }

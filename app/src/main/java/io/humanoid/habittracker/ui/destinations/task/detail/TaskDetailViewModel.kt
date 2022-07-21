@@ -14,9 +14,13 @@ class TaskDetailViewModel(
 ) : BaseViewModel<TaskDetailUiEvent>() {
 
     val taskUseCases = appModule.domainModule.taskUseCases
+    val entryUseCases = appModule.domainModule.entryUseCases
 
     val taskState = mutableStateOf(taskUseCases.getTask(taskId)!!)
     val taskLiveData = MutableLiveData(taskUseCases.getTask(taskId)!!)
+    val taskSubscription = taskUseCases.observeTask(taskId, taskLiveData)
+
+    val entriesLiveData = entryUseCases.subscribeForTask(taskState.value.id)
 
     override fun onUiEvent(event: TaskDetailUiEvent) {
         when (event) {
@@ -36,8 +40,13 @@ class TaskDetailViewModel(
         taskState.value = taskUseCases.getTask(id)!!
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        taskSubscription.cancel()
+    }
+
     class Factory(val taskId: Long) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return TaskDetailViewModel(taskId) as T
         }
     }
