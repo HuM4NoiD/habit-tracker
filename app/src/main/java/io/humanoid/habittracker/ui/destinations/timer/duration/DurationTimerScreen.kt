@@ -12,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,35 @@ fun DurationTimerScreen(
         }
     }
 
+    RepsTimerContent(
+        task = task,
+        startTime = startTime,
+        timeElapsed = timeElapsed,
+        clockState = clockState,
+        onPause = { viewModel.onUiEvent(DurationTimerUiEvent.PAUSE) },
+        onResume = { viewModel.onUiEvent(DurationTimerUiEvent.RESUME) },
+        onFinish = { time ->
+            entryInput.onUiEvent(
+                EntryInputUiEvent.AddEntry(
+                    Entry(count = (time / 10L).toInt())
+                )
+            )
+            viewModel.onUiEvent(DurationTimerUiEvent.STOP)
+            navigator.popBackStack()
+        }
+    )
+}
+
+@Composable
+fun RepsTimerContent(
+    task: Task,
+    startTime: Int,
+    timeElapsed: State<Long>,
+    clockState: State<DurationClock.ClockState>,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onFinish: (Long) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -85,8 +115,8 @@ fun DurationTimerScreen(
                     FloatingActionButton(
                         onClick = {
                             when (clockState.value) {
-                                DurationClock.ClockState.PAUSED -> viewModel.onUiEvent(DurationTimerUiEvent.RESUME)
-                                DurationClock.ClockState.RUNNING -> viewModel.onUiEvent(DurationTimerUiEvent.PAUSE)
+                                DurationClock.ClockState.PAUSED -> onResume()
+                                DurationClock.ClockState.RUNNING -> onPause()
                                 else -> {}
                             }
                         },
@@ -107,13 +137,7 @@ fun DurationTimerScreen(
                 }
                 FloatingActionButton(
                     onClick = {
-                        entryInput.onUiEvent(
-                            EntryInputUiEvent.AddEntry(
-                                Entry(count = (timeElapsed.value / 10L).toInt())
-                            )
-                        )
-                        viewModel.onUiEvent(DurationTimerUiEvent.STOP)
-                        navigator.popBackStack()
+                        onFinish(timeElapsed.value)
                     }
                 ) {
                     Icon(painter = painterResource(id = R.drawable.ic_str_check), contentDescription = "Record Time")

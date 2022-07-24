@@ -12,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,25 @@ fun RepsTimerScreen(
         }
     }
 
+    RepsTimerContent(
+        task = task,
+        startTime = startTime,
+        timer = timer,
+        timerState = timerState,
+        onPause = { viewModel.onUiEvent(RepsTimerUiEvent.PauseTimer) },
+        onResume = { viewModel.onUiEvent(RepsTimerUiEvent.ResumeTimer) }
+    )
+}
+
+@Composable
+fun RepsTimerContent(
+    task: Task,
+    startTime: Int,
+    timer: State<Long?>,
+    timerState: State<RepsClock.TimerState?>,
+    onPause: () -> Unit,
+    onResume: () -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -93,8 +113,8 @@ fun RepsTimerScreen(
                     FloatingActionButton(
                         onClick = {
                             when (timerState.value) {
-                                RepsClock.TimerState.PAUSED -> viewModel.onUiEvent(RepsTimerUiEvent.ResumeTimer)
-                                RepsClock.TimerState.RUNNING -> viewModel.onUiEvent(RepsTimerUiEvent.PauseTimer)
+                                RepsClock.TimerState.PAUSED -> onResume()
+                                RepsClock.TimerState.RUNNING -> onPause()
                                 else -> {}
                             }
                         },

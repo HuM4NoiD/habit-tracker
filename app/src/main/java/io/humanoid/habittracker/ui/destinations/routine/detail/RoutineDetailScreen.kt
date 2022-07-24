@@ -163,7 +163,7 @@ private fun RoutineDetailContent(
                             modifier = Modifier
                                 .fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(32.dp)
+                            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
                         ) {
                             items(items = tasksState.value!!) { task ->
                                 TaskListItem(task = task)
