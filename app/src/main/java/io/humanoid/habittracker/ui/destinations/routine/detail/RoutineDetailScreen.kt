@@ -35,6 +35,7 @@ import io.humanoid.habittracker.datum.model.Routine
 import io.humanoid.habittracker.ui.component.TaskListItem
 import io.humanoid.habittracker.ui.destinations.destinations.RoutineInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskSelectionSheetDestination
+import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
 
 @Composable
 @Destination
@@ -175,7 +176,7 @@ private fun RoutineDetailContent(
         }
         FloatingActionButton(
             onClick = {
-
+                navigator.navigate(TimerScreenDestination(tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

@@ -13,6 +13,7 @@ class TaskUseCases(
     fun insertTask(task: Task) = repository.insert(task)
 
     fun observeTask(taskId: Long, taskLiveData: MutableLiveData<Task>): DataSubscription {
+        val task = repository.get(taskId)
         val observer = buildObserver(taskId, taskLiveData)
         return repository.observeTask(observer)
     }

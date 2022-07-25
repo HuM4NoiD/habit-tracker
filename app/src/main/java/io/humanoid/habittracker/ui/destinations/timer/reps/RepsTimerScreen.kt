@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -79,19 +78,13 @@ fun RepsTimerContent(
     timer: State<Long?>,
     timerState: State<RepsClock.TimerState?>,
     onPause: () -> Unit,
-    onResume: () -> Unit
+    onResume: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = task.name,
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(32.dp)
-        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),

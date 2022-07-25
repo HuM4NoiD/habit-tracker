@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -58,7 +57,7 @@ fun DurationTimerScreen(
         }
     }
 
-    RepsTimerContent(
+    DurationTimerContent(
         task = task,
         startTime = startTime,
         timeElapsed = timeElapsed,
@@ -78,26 +77,20 @@ fun DurationTimerScreen(
 }
 
 @Composable
-fun RepsTimerContent(
+fun DurationTimerContent(
     task: Task,
     startTime: Int,
     timeElapsed: State<Long>,
     clockState: State<DurationClock.ClockState>,
     onPause: () -> Unit,
     onResume: () -> Unit,
-    onFinish: (Long) -> Unit
+    onFinish: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = task.name + " id: ${task.id}",
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(32.dp)
-        )
         if (startTime > 0) {
             Text(
                 text = "$startTime",
