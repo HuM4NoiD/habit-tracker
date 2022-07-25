@@ -45,12 +45,13 @@ import kotlinx.coroutines.delay
 fun TimerScreen(
     navigator: DestinationsNavigator,
     repsResultRecipient: ResultRecipient<RepsEntryInputSheetDestination, IdCount>,
+    interval: Int,
     taskIds: LongArray
 ) {
     val viewModel = viewModel<TimerViewModel>(factory = TimerViewModel.Factory(taskIds))
 
     var interstitialTime by remember {
-        mutableStateOf(5)
+        mutableStateOf(interval)
     }
     val context = LocalContext.current
 
@@ -76,7 +77,7 @@ fun TimerScreen(
     repsResultRecipient.onResult { pair ->
         viewModel.onUiEvent(TimerUiEvent.FinishRepsTimer(pair.id, pair.count))
         viewModel.onUiEvent(TimerUiEvent.GoNext)
-        interstitialTime = 5
+        interstitialTime = interval
     }
 
     Column(
@@ -192,7 +193,7 @@ fun TimerScreen(
                                     ).show()
                                     viewModel.onUiEvent(TimerUiEvent.FinishDurationTimer(task.id, time.toInt()))
                                     viewModel.onUiEvent(TimerUiEvent.GoNext)
-                                    interstitialTime = 5
+                                    interstitialTime = interval
                                 },
 //                                modifier = timerModifier
                             )

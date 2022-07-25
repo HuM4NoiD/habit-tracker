@@ -176,7 +176,10 @@ private fun RoutineDetailContent(
         }
         FloatingActionButton(
             onClick = {
-                navigator.navigate(TimerScreenDestination(tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)))
+                navigator.navigate(TimerScreenDestination(
+                    interval = routine.interval,
+                    taskIds = tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
+                ))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

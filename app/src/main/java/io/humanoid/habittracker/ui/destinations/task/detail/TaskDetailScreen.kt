@@ -149,7 +149,10 @@ private fun TaskDetailContent(
         }
         FloatingActionButton(
             onClick = {
-                navigator.navigate(TimerScreenDestination(longArrayOf(task.id)))
+                navigator.navigate(TimerScreenDestination(
+                    interval = 5,
+                    taskIds = longArrayOf(task.id)
+                ))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
