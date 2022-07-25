@@ -19,7 +19,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.humanoid.habittracker.ui.component.NumberInputRow
-import io.humanoid.habittracker.ui.util.IdCount
+import io.humanoid.habittracker.datum.dto.IdCount
 
 @Composable
 @Destination(style = DestinationStyle.BottomSheet::class)

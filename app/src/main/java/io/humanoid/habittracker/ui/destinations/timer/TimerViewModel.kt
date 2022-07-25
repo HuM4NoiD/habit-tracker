@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import io.humanoid.habittracker.datum.dto.TaskDoneSummaryItem
 import io.humanoid.habittracker.datum.model.Entry
 import io.humanoid.habittracker.datum.model.Task
 import io.humanoid.habittracker.datum.singleton.DurationClock
@@ -14,15 +15,18 @@ import io.humanoid.habittracker.ui.viewmodel.BaseViewModel
 
 class TimerViewModel(
     val taskIds: LongArray
-): BaseViewModel<TimerUiEvent>() {
+) : BaseViewModel<TimerUiEvent>() {
 
     private val taskUseCases = appModule.domainModule.taskUseCases
 
     private var currentIndex = 0;
 
     private val taskList = taskUseCases.getTasks(taskIds)
-    private val _screenState = mutableStateOf<TimerScreenState>(TimerScreenState.Interstitial(taskList[currentIndex].name))
+    private val _screenState =
+        mutableStateOf<TimerScreenState>(TimerScreenState.Interstitial(taskList[currentIndex].name))
     val screenState: State<TimerScreenState> = _screenState
+
+    private val summary: ArrayList<TaskDoneSummaryItem> = ArrayList(taskIds.size)
 
     val repsTimer = RepsClock.timeLeftInMillis.asLiveData()
     val repsTimerState = RepsClock.timerState.asLiveData()
@@ -54,11 +58,11 @@ class TimerViewModel(
             }
             is TimerScreenState.RunningTask -> {
                 // Go to interstitial
-                ++ currentIndex;
+                ++currentIndex;
                 if (currentIndex < taskList.size) {
                     _screenState.value = TimerScreenState.Interstitial(taskList[currentIndex].name)
                 } else {
-                    _screenState.value = TimerScreenState.End
+                    _screenState.value = TimerScreenState.End(summary)
                 }
             }
             else -> {
@@ -106,12 +110,19 @@ class TimerViewModel(
         task?.let {
             task.entries.add(Entry(count = count))
             task.entries.applyChangesToDb()
+            summary.add(
+                TaskDoneSummaryItem(
+                    taskName = task.name,
+                    taskType = task.type,
+                    count = count
+                )
+            )
         }
     }
 
     class Factory(
         val taskIds: LongArray
-    ): ViewModelProvider.Factory {
+    ) : ViewModelProvider.Factory {
         init {
             if (taskIds.isEmpty()) {
                 throw IllegalArgumentException("taskIds is empty!")
@@ -124,8 +135,8 @@ class TimerViewModel(
     }
 
     sealed class TimerScreenState {
-        data class Interstitial(val nextName: String): TimerScreenState()
-        data class RunningTask(val task: Task): TimerScreenState()
-        object End: TimerScreenState()
+        data class Interstitial(val nextName: String) : TimerScreenState()
+        data class RunningTask(val task: Task) : TimerScreenState()
+        data class End(val summary: List<TaskDoneSummaryItem>) : TimerScreenState()
     }
 }

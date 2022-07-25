@@ -1,4 +1,4 @@
-package io.humanoid.habittracker.ui.util
+package io.humanoid.habittracker.datum.dto
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
