@@ -16,15 +16,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.humanoid.habittracker.datum.model.Entry
 import io.humanoid.habittracker.ui.component.NumberInputRow
+import io.humanoid.habittracker.ui.util.IdCount
 
 @Composable
 @Destination(style = DestinationStyle.BottomSheet::class)
 fun RepsEntryInputSheet(
-    navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<IdCount>,
     taskId: Long,
     shouldPopTwice: Boolean
 ) {
@@ -49,12 +49,7 @@ fun RepsEntryInputSheet(
         )
         Button(
             onClick = {
-                viewModel.onUiEvent(EntryInputUiEvent.AddEntry(Entry(count = intervalState.value)))
-
-                navigator.popBackStack()
-                if (shouldPopTwice) {
-                    navigator.popBackStack()
-                }
+                resultNavigator.navigateBack(IdCount(taskId, intervalState.value))
             }
         ) {
             Text(text = "Add Entry")

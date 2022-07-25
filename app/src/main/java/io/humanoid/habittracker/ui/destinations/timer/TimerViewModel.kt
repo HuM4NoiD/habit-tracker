@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import io.humanoid.habittracker.datum.model.Entry
 import io.humanoid.habittracker.datum.model.Task
 import io.humanoid.habittracker.datum.singleton.DurationClock
 import io.humanoid.habittracker.datum.singleton.RepsClock
@@ -36,12 +37,12 @@ class TimerViewModel(
             is TimerUiEvent.StartRepsTimer -> startRepsTimer(event.timeInSeconds)
             TimerUiEvent.PauseRepsTimer -> pauseRepsTimer()
             TimerUiEvent.ResumeRepsTimer -> resumeRepsTimer()
-            TimerUiEvent.FinishRepsTimer -> finishRepsTimer()
+            is TimerUiEvent.FinishRepsTimer -> finishRepsTimer(event.taskId, event.count)
 
             TimerUiEvent.StartDurationTimer -> startDurationTimer()
             TimerUiEvent.PauseDurationTimer -> pauseDurationTimer()
             TimerUiEvent.ResumeDurationTimer -> resumeDurationTimer()
-            TimerUiEvent.FinishDurationTimer -> finishDurationTimer()
+            is TimerUiEvent.FinishDurationTimer -> finishDurationTimer(event.taskId, event.count)
         }
     }
 
@@ -78,8 +79,9 @@ class TimerViewModel(
         RepsClock.resumeTimer()
     }
 
-    private fun finishRepsTimer() {
+    private fun finishRepsTimer(taskId: Long, count: Int) {
         RepsClock.stopTimer()
+        addEntry(taskId, count)
     }
 
     private fun startDurationTimer() {
@@ -94,8 +96,17 @@ class TimerViewModel(
         DurationClock.resume()
     }
 
-    private fun finishDurationTimer() {
+    private fun finishDurationTimer(taskId: Long, count: Int) {
         DurationClock.stop()
+        addEntry(taskId, count)
+    }
+
+    private fun addEntry(taskId: Long, count: Int) {
+        val task = taskUseCases.getTask(taskId)
+        task?.let {
+            task.entries.add(Entry(count = count))
+            task.entries.applyChangesToDb()
+        }
     }
 
     class Factory(

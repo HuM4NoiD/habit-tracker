@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -30,22 +31,26 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
 import io.humanoid.habittracker.datum.model.TaskType
 import io.humanoid.habittracker.datum.singleton.RepsClock
+import io.humanoid.habittracker.ui.destinations.destinations.RepsEntryInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.timer.duration.DurationTimerContent
 import io.humanoid.habittracker.ui.destinations.timer.reps.RepsTimerContent
+import io.humanoid.habittracker.ui.util.IdCount
 import kotlinx.coroutines.delay
 
 @Composable
 @Destination
 fun TimerScreen(
     navigator: DestinationsNavigator,
+    repsResultRecipient: ResultRecipient<RepsEntryInputSheetDestination, IdCount>,
     taskIds: LongArray
 ) {
     val viewModel = viewModel<TimerViewModel>(factory = TimerViewModel.Factory(taskIds))
 
     var interstitialTime by remember {
-        mutableStateOf(3)
+        mutableStateOf(5)
     }
     val context = LocalContext.current
 
@@ -66,6 +71,12 @@ fun TimerScreen(
             Toast.makeText(context, "Interstitial Over!", Toast.LENGTH_SHORT).show()
             viewModel.onUiEvent(TimerUiEvent.GoNext)
         }
+    }
+
+    repsResultRecipient.onResult { pair ->
+        viewModel.onUiEvent(TimerUiEvent.FinishRepsTimer(pair.id, pair.count))
+        viewModel.onUiEvent(TimerUiEvent.GoNext)
+        interstitialTime = 5
     }
 
     Column(
@@ -134,15 +145,19 @@ fun TimerScreen(
                 ) {
                     when (task.type) {
                         TaskType.REPS -> {
-                            LaunchedEffect(key1 = repsTimerState.value) {
-                                if (repsTimerState.value == RepsClock.TimerState.FINISHED) {
-                                    viewModel.onUiEvent(TimerUiEvent.FinishRepsTimer)
-                                }
-                            }
+                            RepsTimerLaunchEffect(viewModel = viewModel, timeInSeconds = 10)
+
+                            RepsTimerFinishEffect(
+                                viewModel = viewModel,
+                                taskId = task.id,
+                                repsTimerState = repsTimerState,
+                                navigator = navigator
+                            )
 
                             RepsTimerContent(
                                 task = task,
                                 startTime = 0,
+                                totalTimeInSeconds = 10,
                                 timer = repsTimer,
                                 timerState = repsTimerState,
                                 onPause = {
@@ -155,6 +170,9 @@ fun TimerScreen(
                             )
                         }
                         TaskType.DURATION -> {
+                            
+                            DurationTimerLaunchEffect(viewModel = viewModel)
+                            
                             DurationTimerContent(
                                 task = task,
                                 startTime = 0,
@@ -166,8 +184,15 @@ fun TimerScreen(
                                 onResume = {
                                     viewModel.onUiEvent(TimerUiEvent.ResumeDurationTimer)
                                 },
-                                onFinish = {
-                                    viewModel.onUiEvent(TimerUiEvent.FinishDurationTimer)
+                                onFinish = { time ->
+                                    Toast.makeText(
+                                        context,
+                                        "Duration Timer Finished for ${task.name} with $time count",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    viewModel.onUiEvent(TimerUiEvent.FinishDurationTimer(task.id, time.toInt()))
+                                    viewModel.onUiEvent(TimerUiEvent.GoNext)
+                                    interstitialTime = 5
                                 },
 //                                modifier = timerModifier
                             )
@@ -176,8 +201,36 @@ fun TimerScreen(
                 }
             }
             TimerViewModel.TimerScreenState.End -> {
-
+                Text(text = "Done!!!", style = MaterialTheme.typography.h1)
             }
+        }
+    }
+}
+
+@Composable
+private fun DurationTimerLaunchEffect(viewModel: TimerViewModel) {
+    LaunchedEffect(true) {
+        viewModel.onUiEvent(TimerUiEvent.StartDurationTimer)
+    }
+}
+
+@Composable
+private fun RepsTimerLaunchEffect(viewModel: TimerViewModel, timeInSeconds: Int) {
+    LaunchedEffect(true) {
+        viewModel.onUiEvent(TimerUiEvent.StartRepsTimer(timeInSeconds))
+    }
+}
+
+@Composable
+private fun RepsTimerFinishEffect(
+    viewModel: TimerViewModel,
+    taskId: Long,
+    repsTimerState: State<RepsClock.TimerState?>,
+    navigator: DestinationsNavigator
+) {
+    LaunchedEffect(key1 = repsTimerState.value) {
+        if (repsTimerState.value == RepsClock.TimerState.FINISHED) {
+            navigator.navigate(RepsEntryInputSheetDestination(taskId, false))
         }
     }
 }

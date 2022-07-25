@@ -31,10 +31,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.humanoid.habittracker.R
 import io.humanoid.habittracker.datum.model.Task
-import io.humanoid.habittracker.datum.model.TaskType
-import io.humanoid.habittracker.ui.destinations.destinations.DurationTimerScreenDestination
-import io.humanoid.habittracker.ui.destinations.destinations.RepsTimerScreenDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskInputSheetDestination
+import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
 
 @Composable
 @Destination
@@ -151,10 +149,7 @@ private fun TaskDetailContent(
         }
         FloatingActionButton(
             onClick = {
-                when (task.type) {
-                    TaskType.REPS -> navigator.navigate(RepsTimerScreenDestination(task))
-                    TaskType.DURATION -> navigator.navigate(DurationTimerScreenDestination(task))
-                }
+                navigator.navigate(TimerScreenDestination(longArrayOf(task.id)))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

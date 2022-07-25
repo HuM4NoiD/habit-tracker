@@ -64,6 +64,7 @@ fun RepsTimerScreen(
     RepsTimerContent(
         task = task,
         startTime = startTime,
+        totalTimeInSeconds = 20,
         timer = timer,
         timerState = timerState,
         onPause = { viewModel.onUiEvent(RepsTimerUiEvent.PauseTimer) },
@@ -75,6 +76,7 @@ fun RepsTimerScreen(
 fun RepsTimerContent(
     task: Task,
     startTime: Int,
+    totalTimeInSeconds: Int,
     timer: State<Long?>,
     timerState: State<RepsClock.TimerState?>,
     onPause: () -> Unit,
@@ -99,7 +101,7 @@ fun RepsTimerContent(
             } else {
                 val actualTime = ((timer.value ?: 0) / 1000f).toInt()
                 CountDownRing(
-                    progress = actualTime / 20f,
+                    progress = actualTime / totalTimeInSeconds.toFloat(),
                     seconds = actualTime
                 )
                 if (timerState.value != RepsClock.TimerState.NOT_RUNNING && timerState.value != RepsClock.TimerState.FINISHED) {
