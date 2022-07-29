@@ -19,7 +19,6 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -41,6 +40,7 @@ import io.humanoid.habittracker.ui.component.TaskListItem
 import io.humanoid.habittracker.ui.destinations.destinations.RoutineInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskSelectionSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
+import io.humanoid.habittracker.ui.util.CustomSnackbarScaffold
 import kotlinx.coroutines.launch
 
 @Composable
@@ -91,7 +91,7 @@ private fun RoutineDetailContent(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
+    CustomSnackbarScaffold(
         scaffoldState = scaffoldState,
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
@@ -103,13 +103,12 @@ private fun RoutineDetailContent(
                                 "There are no tasks in this routine!",
                                 "Add Task"
                             )
-                            when (snackbarResult) {
-                                SnackbarResult.ActionPerformed -> navigator.navigate(
+                            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                                navigator.navigate(
                                     TaskSelectionSheetDestination(
                                         tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
                                     )
                                 )
-                                else -> {}
                             }
                         }
                     } else {
