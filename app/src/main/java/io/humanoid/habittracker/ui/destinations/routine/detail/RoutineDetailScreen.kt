@@ -19,10 +19,12 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,11 +38,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import io.humanoid.habittracker.R
 import io.humanoid.habittracker.datum.model.Routine
+import io.humanoid.habittracker.datum.model.Task
 import io.humanoid.habittracker.ui.component.TaskListItem
 import io.humanoid.habittracker.ui.destinations.destinations.RoutineInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskSelectionSheetDestination
-import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
 import io.humanoid.habittracker.ui.util.CustomSnackbarScaffold
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -97,28 +100,7 @@ private fun RoutineDetailContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    if (tasksState.value.isNullOrEmpty()) {
-                        coroutineScope.launch {
-                            val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
-                                "There are no tasks in this routine!",
-                                "Add Task"
-                            )
-                            if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                navigator.navigate(
-                                    TaskSelectionSheetDestination(
-                                        tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
-                                    )
-                                )
-                            }
-                        }
-                    } else {
-                        navigator.navigate(
-                            TimerScreenDestination(
-                                interval = routine.interval,
-                                taskIds = tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
-                            )
-                        )
-                    }
+                    launchRoutine(routine, tasksState, scaffoldState, coroutineScope, navigator)
                 },
                 modifier = Modifier
                     .padding(16.dp)
@@ -146,7 +128,7 @@ private fun RoutineDetailContent(
                     )
                     IconButton(
                         onClick = {
-                            navigator.navigate(RoutineInputSheetDestination(routine))
+                            editRoutine(routine, navigator)
                         },
                         modifier = Modifier
                             .padding(32.dp)
@@ -176,11 +158,7 @@ private fun RoutineDetailContent(
                             )
                             IconButton(
                                 onClick = {
-                                    navigator.navigate(
-                                        TaskSelectionSheetDestination(
-                                            tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
-                                        )
-                                    )
+                                    startTimerScreen(tasksState, navigator)
                                 },
                                 modifier = Modifier
                                     .size(48.dp)
@@ -220,4 +198,50 @@ private fun RoutineDetailContent(
             }
         }
     }
+}
+
+private fun launchRoutine(
+    routine: Routine,
+    tasksState: State<List<Task>?>,
+    scaffoldState: ScaffoldState,
+    coroutineScope: CoroutineScope,
+    navigator: DestinationsNavigator
+) {
+    if (tasksState.value.isNullOrEmpty()) {
+        coroutineScope.launch {
+            val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+                "There are no tasks in this routine!",
+                "Add Task"
+            )
+            if (snackbarResult == SnackbarResult.ActionPerformed) {
+                navigator.navigate(
+                    TaskSelectionSheetDestination(
+                        tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
+                    )
+                )
+            }
+        }
+    } else {
+        startTimerScreen(tasksState, navigator)
+    }
+}
+
+private fun startTimerScreen(
+    tasksState: State<List<Task>?>,
+    navigator: DestinationsNavigator
+) {
+    navigator.navigate(
+        TaskSelectionSheetDestination(
+            tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
+        )
+    )
+}
+
+private fun editRoutine(
+    routine: Routine,
+    navigator: DestinationsNavigator
+) {
+    navigator.navigate(
+        RoutineInputSheetDestination(routine)
+    )
 }

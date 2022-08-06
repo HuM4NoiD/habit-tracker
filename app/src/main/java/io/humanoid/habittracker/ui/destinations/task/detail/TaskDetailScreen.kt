@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.humanoid.habittracker.R
+import io.humanoid.habittracker.datum.model.Entry
 import io.humanoid.habittracker.datum.model.Task
 import io.humanoid.habittracker.ui.destinations.destinations.TaskInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
@@ -103,7 +104,7 @@ private fun TaskDetailContent(
                 }
                 IconButton(
                     onClick = {
-                        navigator.navigate(TaskInputSheetDestination(task))
+                        editTask(task, navigator)
                     },
                     modifier = Modifier
                         .padding(32.dp)
@@ -128,20 +129,7 @@ private fun TaskDetailContent(
                 ) {
                     entriesState.value?.let { entries ->
                         items(items = entries) { entry ->
-                            Text(
-                                text = "Entry: ${entry.count}",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colors.primary,
-                                        shape = RoundedCornerShape(4.dp)
-                                    )
-                                    .clip(
-                                        RoundedCornerShape(4.dp)
-                                    )
-                                    .padding(8.dp)
-                            )
+                            EntryTempRow(entry = entry)
                         }
                     }
                 }
@@ -149,10 +137,7 @@ private fun TaskDetailContent(
         }
         FloatingActionButton(
             onClick = {
-                navigator.navigate(TimerScreenDestination(
-                    interval = 5,
-                    taskIds = longArrayOf(task.id)
-                ))
+                startTimerScreen(task.id, 5, navigator)
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -161,4 +146,42 @@ private fun TaskDetailContent(
             Icon(painter = painterResource(id = R.drawable.ic_str_launch), contentDescription = "Add entry")
         }
     }
+}
+
+@Composable
+fun EntryTempRow(
+    entry: Entry
+) {
+    Text(
+        text = "Entry: ${entry.count}",
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colors.primary,
+                shape = RoundedCornerShape(4.dp)
+            )
+            .clip(
+                RoundedCornerShape(4.dp)
+            )
+            .padding(8.dp)
+    )
+}
+
+private fun startTimerScreen(
+    taskId: Long,
+    interval: Int,
+    navigator: DestinationsNavigator
+) {
+    navigator.navigate(TimerScreenDestination(
+        interval = interval,
+        taskIds = longArrayOf(taskId)
+    ))
+}
+
+private fun editTask(
+    task: Task,
+    navigator: DestinationsNavigator
+) {
+    navigator.navigate(TaskInputSheetDestination(task))
 }
