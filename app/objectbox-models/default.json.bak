@@ -29,9 +29,9 @@
       ],
       "relations": [
         {
-          "id": "1:995740203740117570",
-          "name": "tasks",
-          "targetId": "2:5583675321063272458"
+          "id": "4:2841998941071935075",
+          "name": "taskLinks",
+          "targetId": "4:6115774342806882425"
         }
       ]
     },
@@ -64,7 +64,13 @@
           "type": 9
         }
       ],
-      "relations": []
+      "relations": [
+        {
+          "id": "2:8480541558826305900",
+          "name": "routines",
+          "targetId": "1:4236952418457503679"
+        }
+      ]
     },
     {
       "id": "3:1223863992668405524",
@@ -92,11 +98,40 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "4:6115774342806882425",
+      "lastPropertyId": "3:1179251972356902835",
+      "name": "TaskLink",
+      "properties": [
+        {
+          "id": "1:4045505670095580863",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9137557458924213171",
+          "name": "index",
+          "indexId": "5:1027725558056589721",
+          "type": 5,
+          "flags": 8
+        },
+        {
+          "id": "3:1179251972356902835",
+          "name": "linkId",
+          "indexId": "6:5821430058123426576",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "Task"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "3:1223863992668405524",
-  "lastIndexId": "4:4415591530877415463",
-  "lastRelationId": "1:995740203740117570",
+  "lastEntityId": "4:6115774342806882425",
+  "lastIndexId": "6:5821430058123426576",
+  "lastRelationId": "4:2841998941071935075",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
@@ -105,6 +140,9 @@
     5699850481143270594
   ],
   "retiredPropertyUids": [],
-  "retiredRelationUids": [],
+  "retiredRelationUids": [
+    995740203740117570,
+    3289880390825062862
+  ],
   "version": 1
 }

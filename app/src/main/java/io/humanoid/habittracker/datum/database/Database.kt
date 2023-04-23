@@ -7,6 +7,7 @@ import io.humanoid.habittracker.datum.model.Entry
 import io.humanoid.habittracker.datum.model.MyObjectBox
 import io.humanoid.habittracker.datum.model.Routine
 import io.humanoid.habittracker.datum.model.Task
+import io.humanoid.habittracker.datum.model.TaskLink
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.android.AndroidObjectBrowser
@@ -32,6 +33,10 @@ object Database {
 
     val taskBox: Box<Task> by lazy {
         store.boxFor(Task::class.java)
+    }
+
+    val taskLinkBox: Box<TaskLink> by lazy {
+        store.boxFor(TaskLink::class.java)
     }
 
     val routineBox: Box<Routine> by lazy {

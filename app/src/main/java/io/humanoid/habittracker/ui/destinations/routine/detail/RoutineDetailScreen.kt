@@ -38,10 +38,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import io.humanoid.habittracker.R
 import io.humanoid.habittracker.datum.model.Routine
-import io.humanoid.habittracker.datum.model.Task
+import io.humanoid.habittracker.datum.model.TaskLink
 import io.humanoid.habittracker.ui.component.TaskListItem
 import io.humanoid.habittracker.ui.destinations.destinations.RoutineInputSheetDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskSelectionSheetDestination
+import io.humanoid.habittracker.ui.destinations.destinations.TimerScreenDestination
 import io.humanoid.habittracker.ui.util.CustomSnackbarScaffold
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,7 +55,8 @@ fun RoutineDetailScreen(
     selectionRecipient: ResultRecipient<TaskSelectionSheetDestination, LongArray>,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: RoutineDetailViewModel = viewModel(factory = RoutineDetailViewModel.Factory(routineId))
+    val viewModel: RoutineDetailViewModel =
+        viewModel(factory = RoutineDetailViewModel.Factory(routineId))
     val routineState = viewModel.routineLiveData.observeAsState()
 
     if (routineState.value == null) {
@@ -90,7 +92,7 @@ private fun RoutineDetailContent(
         viewModel.onUiEvent(RoutineDetailUiEvent.TasksSelected(it))
     }
 
-    val tasksState = viewModel.selectedTasksLiveData.observeAsState()
+    val linksState = viewModel.selectedTaskLinksLiveData.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -100,12 +102,15 @@ private fun RoutineDetailContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    launchRoutine(routine, tasksState, scaffoldState, coroutineScope, navigator)
+                    launchRoutine(routine, linksState, scaffoldState, coroutineScope, navigator)
                 },
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_str_launch), contentDescription = "Add entry")
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_str_launch),
+                    contentDescription = "Add entry"
+                )
             }
         }
     ) {
@@ -158,7 +163,7 @@ private fun RoutineDetailContent(
                             )
                             IconButton(
                                 onClick = {
-                                    startTimerScreen(tasksState, navigator)
+                                    taskSelectionDialog(linksState, navigator)
                                 },
                                 modifier = Modifier
                                     .size(48.dp)
@@ -170,7 +175,7 @@ private fun RoutineDetailContent(
                                 )
                             }
                         }
-                        if (tasksState.value.isNullOrEmpty()) {
+                        if (linksState.value.isNullOrEmpty()) {
                             Box(
                                 modifier = Modifier.fillMaxSize()
                             ) {
@@ -188,8 +193,8 @@ private fun RoutineDetailContent(
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
                             ) {
-                                items(items = tasksState.value!!) { task ->
-                                    TaskListItem(task = task)
+                                items(items = linksState.value!!) { taskLink ->
+                                    TaskListItem(task = taskLink.link.target)
                                 }
                             }
                         }
@@ -202,37 +207,53 @@ private fun RoutineDetailContent(
 
 private fun launchRoutine(
     routine: Routine,
-    tasksState: State<List<Task>?>,
+    linksState: State<List<TaskLink>?>,
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     navigator: DestinationsNavigator
 ) {
-    if (tasksState.value.isNullOrEmpty()) {
+    if (linksState.value.isNullOrEmpty()) {
         coroutineScope.launch {
             val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
                 "There are no tasks in this routine!",
                 "Add Task"
             )
             if (snackbarResult == SnackbarResult.ActionPerformed) {
-                navigator.navigate(
-                    TaskSelectionSheetDestination(
-                        tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
-                    )
+                taskSelectionDialog(
+                    linksState = linksState,
+                    navigator = navigator
                 )
             }
         }
     } else {
-        startTimerScreen(tasksState, navigator)
+        startTimerScreen(routine.interval, linksState, navigator)
     }
 }
 
-private fun startTimerScreen(
-    tasksState: State<List<Task>?>,
+private fun taskSelectionDialog(
+    linksState: State<List<TaskLink>?>,
     navigator: DestinationsNavigator
 ) {
     navigator.navigate(
         TaskSelectionSheetDestination(
-            tasksState.value?.map { task -> task.id }?.toLongArray() ?: LongArray(0)
+            selectedTaskIds = linksState.value
+                ?.map { link -> link.link.targetId }?.toLongArray()
+                ?: LongArray(0)
+        )
+    )
+}
+
+private fun startTimerScreen(
+    interval: Int,
+    linksState: State<List<TaskLink>?>,
+    navigator: DestinationsNavigator
+) {
+    navigator.navigate(
+        TimerScreenDestination(
+            interval = interval,
+            taskIds = linksState.value
+                ?.map { link -> link.link.targetId }?.toLongArray()
+                ?: LongArray(0)
         )
     )
 }

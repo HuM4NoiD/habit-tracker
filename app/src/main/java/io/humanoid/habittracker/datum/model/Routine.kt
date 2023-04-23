@@ -17,8 +17,8 @@ data class Routine(
     val name: String,
     val interval: Int,
 ): Parcelable {
-    @Backlink(to = "routines")
-    lateinit var tasks: ToMany<Task>
+    @Backlink(to = "routine")
+    lateinit var taskLinks: ToMany<TaskLink>
 
     override fun toString(): String {
         return """

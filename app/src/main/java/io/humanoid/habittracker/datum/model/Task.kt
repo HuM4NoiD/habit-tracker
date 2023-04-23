@@ -24,7 +24,8 @@ data class Task(
     @Backlink(to = "task")
     lateinit var entries: ToMany<Entry>
 
-    lateinit var routines: ToMany<Routine>
+    @Backlink(to = "link")
+    lateinit var links: ToMany<TaskLink>
 
     override fun toString(): String {
         return """
