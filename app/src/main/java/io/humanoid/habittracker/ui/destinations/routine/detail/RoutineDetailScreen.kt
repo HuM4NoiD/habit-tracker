@@ -29,6 +29,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,8 @@ private fun RoutineDetailContent(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
+    val context = LocalContext.current
+
     CustomSnackbarScaffold(
         scaffoldState = scaffoldState,
         floatingActionButtonPosition = FabPosition.End,
@@ -120,6 +123,7 @@ private fun RoutineDetailContent(
             Column(
                 modifier = modifier.fillMaxSize()
             ) {
+                // Header Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -146,11 +150,13 @@ private fun RoutineDetailContent(
                         )
                     }
                 }
+                // Routine List Card
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
+                        // Routine List Card Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -163,6 +169,7 @@ private fun RoutineDetailContent(
                             )
                             IconButton(
                                 onClick = {
+//                                    Toast.makeText(context, "Task ids: ${linksState.value?.map { it.link.targetId }}", Toast.LENGTH_SHORT).show()
                                     taskSelectionDialog(linksState, navigator)
                                 },
                                 modifier = Modifier
@@ -191,7 +198,7 @@ private fun RoutineDetailContent(
                                 modifier = Modifier
                                     .fillMaxSize(),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
+                                contentPadding = PaddingValues(32.dp)
                             ) {
                                 items(items = linksState.value!!) { taskLink ->
                                     TaskListItem(task = taskLink.link.target)
