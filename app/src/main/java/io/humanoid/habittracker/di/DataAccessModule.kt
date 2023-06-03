@@ -21,7 +21,7 @@ interface DataAccessModule {
 
 private object DataContainer: DataAccessModule{
     override val taskRepository by lazy {
-        TaskRepositoryImpl(Database.taskBox)
+        TaskRepositoryImpl(Database.taskBox, Database.taskLinkBox)
     }
     override val taskLinkRepository by lazy {
         TaskLinkRepositoryImpl(Database.taskLinkBox)

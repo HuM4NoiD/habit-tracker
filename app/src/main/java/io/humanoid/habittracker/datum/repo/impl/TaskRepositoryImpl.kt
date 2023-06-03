@@ -3,6 +3,7 @@ package io.humanoid.habittracker.datum.repo.impl
 import androidx.lifecycle.LiveData
 import io.humanoid.habittracker.datum.model.Routine_
 import io.humanoid.habittracker.datum.model.Task
+import io.humanoid.habittracker.datum.model.TaskLink
 import io.humanoid.habittracker.datum.model.TaskLink_
 import io.humanoid.habittracker.datum.model.Task_
 import io.humanoid.habittracker.datum.repo.TaskRepository
@@ -13,7 +14,8 @@ import io.objectbox.reactive.DataObserver
 import io.objectbox.reactive.DataSubscription
 
 class TaskRepositoryImpl(
-    private val box: Box<Task>
+    private val box: Box<Task>,
+    private val taskLinkBox: Box<TaskLink>,
 ) : TaskRepository {
 
     override fun get(id: Long): Task? {
@@ -29,7 +31,16 @@ class TaskRepositoryImpl(
     }
 
     override fun remove(id: Long) {
-        box.remove(id)
+        box.store.runInTx {
+            val task = box[id]
+            val linkIds = task.links.map { it.id }.toLongArray()
+            val taskLinks = taskLinkBox[linkIds]
+            for (tl in taskLinks) {
+                tl.link.target = null
+            }
+            taskLinkBox.remove(taskLinks)
+            box.remove(id)
+        }
     }
 
     override fun observeTask(observer: DataObserver<Class<Task>>): DataSubscription {
