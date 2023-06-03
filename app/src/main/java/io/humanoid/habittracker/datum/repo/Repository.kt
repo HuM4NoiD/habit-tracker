@@ -6,6 +6,6 @@ interface Repository<T> {
 
     fun get(id: Long): T?
     fun insert(data: T): Long
-    fun remove(id: Long): Boolean
+    fun remove(id: Long)
     fun subscribeToAll(): LiveData<List<T>>
 }

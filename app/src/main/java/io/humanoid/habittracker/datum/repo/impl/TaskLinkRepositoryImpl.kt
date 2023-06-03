@@ -17,7 +17,9 @@ class TaskLinkRepositoryImpl(
 
     override fun insert(data: TaskLink): Long = box.put(data)
 
-    override fun remove(id: Long): Boolean = box.remove(id)
+    override fun remove(id: Long) {
+        box.remove(id)
+    }
 
     override fun remove(ids: LongArray) = box.remove(*ids)
 

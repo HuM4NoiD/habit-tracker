@@ -23,8 +23,8 @@ class RoutineRepositoryImpl(
         return box.put(data)
     }
 
-    override fun remove(id: Long): Boolean {
-        return box.remove(id)
+    override fun remove(id: Long) {
+        box.remove(id)
     }
 
     override fun subscribeToAll(): LiveData<List<Routine>> {

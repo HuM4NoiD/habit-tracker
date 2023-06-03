@@ -28,8 +28,8 @@ class TaskRepositoryImpl(
         return box.put(data)
     }
 
-    override fun remove(id: Long): Boolean {
-        return box.remove(id)
+    override fun remove(id: Long) {
+        box.remove(id)
     }
 
     override fun observeTask(observer: DataObserver<Class<Task>>): DataSubscription {
