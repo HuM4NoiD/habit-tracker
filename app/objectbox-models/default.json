@@ -62,15 +62,9 @@
     },
     {
       "id": "3:1223863992668405524",
-      "lastPropertyId": "3:7990785973558303348",
+      "lastPropertyId": "4:6291525956297205714",
       "name": "Entry",
       "properties": [
-        {
-          "id": "1:4136973776986541356",
-          "name": "_id",
-          "type": 6,
-          "flags": 1
-        },
         {
           "id": "2:5106639343531376714",
           "name": "count",
@@ -83,6 +77,12 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "Task"
+        },
+        {
+          "id": "4:6291525956297205714",
+          "name": "id",
+          "type": 6,
+          "flags": 1
         }
       ],
       "relations": []
@@ -135,7 +135,9 @@
   "retiredIndexUids": [
     5699850481143270594
   ],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    4136973776986541356
+  ],
   "retiredRelationUids": [
     995740203740117570,
     3289880390825062862,

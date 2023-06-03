@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Entry(
     @Id
-    var _id: Long = 0,
+    var id: Long = 0,
     val count: Int = 0
 ): Parcelable {
     lateinit var task: ToOne<Task>
