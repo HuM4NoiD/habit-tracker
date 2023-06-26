@@ -29,12 +29,16 @@ fun HabitTrackerRoot(
     val navController = rememberAnimatedNavController()
     navController.navigatorProvider.addNavigator(bottomSheetNavigator)
 
+
     ModalBottomSheetLayout(
         bottomSheetNavigator = bottomSheetNavigator,
         scrimColor = MaterialTheme.colors.surface.copy(alpha = 0.5f),
         sheetBackgroundColor = Color.Transparent,
     ) {
         Scaffold(
+            topBar = {
+                TopBar(navController = navController)
+            },
             bottomBar = {
                 BottomNavigator(
                     navController = navController,
@@ -50,5 +54,4 @@ fun HabitTrackerRoot(
             )
         }
     }
-
 }
