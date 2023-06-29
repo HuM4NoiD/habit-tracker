@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +23,7 @@ fun SettingsScreen(
     navigator: DestinationsNavigator
 ) {
     val settingsProvider = dataAccessModule.settingsProvider
-    val repsDurationState = settingsProvider.getRepsDuration().collectAsState(initial = 0)
+    val settings by settingsProvider.getSettings().collectAsState(initial = null)
 
     val coroutineScope = rememberCoroutineScope()
 

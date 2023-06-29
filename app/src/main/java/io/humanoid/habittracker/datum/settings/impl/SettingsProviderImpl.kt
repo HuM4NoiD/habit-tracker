@@ -4,14 +4,13 @@ import androidx.datastore.core.DataStore
 import io.humanoid.habittracker.datum.model.AppSettings
 import io.humanoid.habittracker.datum.settings.SettingsProvider
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class SettingsProviderImpl(
     private val dataStore: DataStore<AppSettings>
 ) : SettingsProvider {
 
-    override fun getRepsDuration(): Flow<Int> {
-        return dataStore.data.map { settings -> settings.repsDuration }
+    override fun getSettings(): Flow<AppSettings> {
+        return dataStore.data
     }
 
     override suspend fun updateRepsDuration(durationInSeconds: Int) {
