@@ -2,6 +2,7 @@ package io.humanoid.habittracker.di
 
 import android.content.Context
 import io.humanoid.habittracker.datum.database.Database
+import io.humanoid.habittracker.datum.singleton.DataStoreProvider
 
 val appModule: AppModule = AppContainer
 
@@ -16,6 +17,7 @@ private object AppContainer: AppModule {
 
     override fun initialize(context: Context) {
         Database.init(context)
+        DataStoreProvider.init(context)
     }
 
     override val dataAccessModule by lazy {

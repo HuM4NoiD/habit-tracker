@@ -1,6 +1,5 @@
 package io.humanoid.habittracker.ui.component
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -21,10 +20,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.ramcosta.composedestinations.navigation.navigateTo
 import io.humanoid.habittracker.R
 import io.humanoid.habittracker.ui.destinations.bottomNavDestinations
 import io.humanoid.habittracker.ui.destinations.destinations.Destination
 import io.humanoid.habittracker.ui.destinations.destinations.RoutineListScreenDestination
+import io.humanoid.habittracker.ui.destinations.destinations.SettingsScreenDestination
 import io.humanoid.habittracker.ui.destinations.destinations.TaskListScreenDestination
 import io.humanoid.habittracker.ui.destinations.navDestination
 
@@ -55,7 +56,7 @@ fun TopBar(
             )
             IconButton(
                 onClick = {
-                    Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
+                    navController.navigateTo(SettingsScreenDestination)
                 },
                 modifier = Modifier.size(24.dp)
             ) {

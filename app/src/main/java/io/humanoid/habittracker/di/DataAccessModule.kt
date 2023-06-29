@@ -9,6 +9,9 @@ import io.humanoid.habittracker.datum.repo.impl.EntryRepositoryImpl
 import io.humanoid.habittracker.datum.repo.impl.RoutineRepositoryImpl
 import io.humanoid.habittracker.datum.repo.impl.TaskLinkRepositoryImpl
 import io.humanoid.habittracker.datum.repo.impl.TaskRepositoryImpl
+import io.humanoid.habittracker.datum.settings.SettingsProvider
+import io.humanoid.habittracker.datum.settings.impl.SettingsProviderImpl
+import io.humanoid.habittracker.datum.singleton.DataStoreProvider
 
 val dataAccessModule: DataAccessModule = DataContainer
 
@@ -17,6 +20,7 @@ interface DataAccessModule {
     val taskLinkRepository: TaskLinkRepository
     val routineRepository: RoutineRepository
     val entryRepository: EntryRepository
+    val settingsProvider: SettingsProvider
 }
 
 private object DataContainer: DataAccessModule{
@@ -31,5 +35,8 @@ private object DataContainer: DataAccessModule{
     }
     override val entryRepository by lazy {
         EntryRepositoryImpl(Database.entryBox)
+    }
+    override val settingsProvider by lazy {
+        SettingsProviderImpl(DataStoreProvider.dataStore)
     }
 }
