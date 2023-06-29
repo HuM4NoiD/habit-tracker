@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun CustomSnackbarScaffold(
     scaffoldState: ScaffoldState,
+    topBar: @Composable () -> Unit,
     floatingActionButtonPosition: FabPosition,
     floatingActionButton: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit

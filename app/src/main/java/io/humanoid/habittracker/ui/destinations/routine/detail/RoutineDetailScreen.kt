@@ -102,6 +102,35 @@ private fun RoutineDetailContent(
     CustomSnackbarScaffold(
         scaffoldState = scaffoldState,
         floatingActionButtonPosition = FabPosition.End,
+        topBar = {
+            // Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = routine.name,
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 32.dp, end = 32.dp, top = 32.dp, bottom = 32.dp)
+                )
+                IconButton(
+                    onClick = {
+                        editRoutine(routine, navigator)
+                    },
+                    modifier = Modifier
+                        .padding(32.dp)
+                        .size(48.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_str_edit),
+                        contentDescription = "Edit this Routine",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -123,33 +152,6 @@ private fun RoutineDetailContent(
             Column(
                 modifier = modifier.fillMaxSize()
             ) {
-                // Header Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = routine.name,
-                        style = MaterialTheme.typography.h4,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 32.dp, end = 32.dp, top = 32.dp, bottom = 32.dp)
-                    )
-                    IconButton(
-                        onClick = {
-                            editRoutine(routine, navigator)
-                        },
-                        modifier = Modifier
-                            .padding(32.dp)
-                            .size(48.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_str_edit),
-                            contentDescription = "Edit this Routine",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
                 // Routine List Card
                 Card(
                     modifier = Modifier.fillMaxSize(),
